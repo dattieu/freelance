@@ -1,0 +1,49 @@
+group 'geny'
+version '1.0'
+
+apply plugin: 'java'
+apply plugin: 'war'
+
+war {
+    archiveName 'loyalty.war'
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+ext {
+    junitVersion = '4.12'
+    hibernateVersion = '4.3.6.Final'
+    hibernateValidationVersion = '4.2.0.Final'
+    springVersion = '4.3.13.RELEASE'
+    h2dbVersion = '1.4.194'
+    servletVersion = '3.1.0'
+    beanvalidationVersion = '2.0.0.Final'
+    jacksonVersion = '2.8.9'
+    log4jVersion = '1.2.17'
+    apacheCommonLangVersion = '3.0'
+    guavaVersion = '23.6-jre'
+}
+
+dependencies {
+    compile "org.springframework:spring-core:$springVersion"
+    compile "org.springframework:spring-webmvc:$springVersion"
+    compile "org.springframework:spring-tx:$springVersion"
+    compile "org.springframework:spring-orm:$springVersion"
+    compile "org.hibernate:hibernate-core:$hibernateVersion"
+    compile "org.hibernate:hibernate-validator:$hibernateValidationVersion"
+    compile "org.hibernate:hibernate-envers:$hibernateVersion"
+    compile "com.h2database:h2:$h2dbVersion"
+    compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
+    compile "log4j:log4j:$log4jVersion"
+    compile "org.apache.commons:commons-lang3:$apacheCommonLangVersion"
+    compile "com.google.guava:guava:$guavaVersion"
+
+    providedCompile "javax.servlet:javax.servlet-api:$servletVersion"
+    providedCompile "javax.validation:validation-api:$beanvalidationVersion"
+
+    testCompile "junit:junit:$junitVersion"
+}
