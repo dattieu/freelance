@@ -18,19 +18,23 @@ public class BusinessException extends RestServerException {
         return new BusinessException(message, httpStatus, errorList);
     }
 
-    public static final BusinessException invalidClientActionTypeException() {
+    public static final BusinessException invalidLoyaltyRequest() {
+        return businessException(Labels.INVALID_LOYALTY_REQUEST, HttpStatus.BAD_REQUEST, Collections.emptyList());
+    }
+
+    public static final BusinessException invalidClientActionType() {
         return businessException(Labels.INVALID_CLIENT_ACTION_TYPE, HttpStatus.BAD_REQUEST, Collections.emptyList());
     }
 
-    public static final BusinessException invalidTransactionAmountException() {
+    public static final BusinessException invalidTransactionAmount() {
         return businessException(Labels.INVALID_EVERYDAY_USE_TRANSACTION_AMOUNT, HttpStatus.BAD_REQUEST, Collections.emptyList());
     }
 
-    public static final BusinessException inapproriateClientActionWithProductTypeException() {
+    public static final BusinessException inappropriateClientActionWithProductType() {
         return businessException(Labels.CLIENT_ACTION_NOT_SUPPORTED_WITH_PRODUCT_TYPE, HttpStatus.CONFLICT, Collections.emptyList());
     }
 
-    public static final BusinessException loyaltyNotFoundException() {
+    public static final BusinessException loyaltyNotFound() {
         return businessException(Labels.LOYALTY_NOT_FOUND, HttpStatus.NOT_FOUND, Collections.emptyList());
     }
 }

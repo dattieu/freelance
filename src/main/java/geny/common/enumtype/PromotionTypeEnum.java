@@ -8,9 +8,10 @@ import java.time.LocalDate;
  * Created by dat on 1/15/2018.
  */
 public enum PromotionTypeEnum {
-    DEFAULT(null, null),
     LAUNCHING_CAMPAIGN(Constants.LAUNCHING_START_DATE, Constants.LAUNCHING_END_DATE),
-    SUMMER_CAMPAIGN(Constants.SUMMER_START_DATE, Constants.SUMMER_END_DATE);
+    SUMMER_CAMPAIGN(Constants.SUMMER_START_DATE, Constants.SUMMER_END_DATE),
+    OTHER_CAMPAIGN(null, null), // for future
+    NO_CAMPAIGN(null, null);
 
     private final LocalDate startDate;
     private final LocalDate endDate;
@@ -28,7 +29,7 @@ public enum PromotionTypeEnum {
         return endDate;
     }
 
-    public static final boolean isOfLaunchingCampaign(PromotionTypeEnum promotionType) {
+    public static final boolean isOfLaunchingCampaign() {
         LocalDate now = LocalDate.now();
         if (now.isEqual(Constants.LAUNCHING_START_DATE) || now.isEqual(Constants.LAUNCHING_END_DATE)) {
             return true;
@@ -36,7 +37,7 @@ public enum PromotionTypeEnum {
         return now.isAfter(Constants.LAUNCHING_START_DATE) && now.isBefore(Constants.LAUNCHING_END_DATE);
     }
 
-    public static final boolean isOfSummerCampaign(PromotionTypeEnum promotionType) {
+    public static final boolean isOfSummerCampaign() {
         LocalDate now = LocalDate.now();
         if (now.isEqual(Constants.SUMMER_START_DATE) || now.isEqual(Constants.SUMMER_END_DATE)) {
             return true;
@@ -47,6 +48,6 @@ public enum PromotionTypeEnum {
     // TODO analyze again since core backend really not know about the promotion
     // TODO also this check is redundant
     public static final boolean isInCampaign(PromotionTypeEnum promotionType) {
-        return promotionType.equals(DEFAULT);
+        return !NO_CAMPAIGN.equals(promotionType);
     }
 }

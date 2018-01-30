@@ -7,6 +7,7 @@ import geny.exception.BusinessException;
 import geny.persistence.dao.LoyaltyDao;
 import geny.service.dto.LoyaltyInformation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,6 @@ public class LoyaltyServiceBean extends BaseLoyaltyBean implements LoyaltyServic
     @Autowired
     private LoyaltyDao loyaltyDao;
 
-    // TODO combine promotion type
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public LoyaltyInformation updateLoyaltyPoints(final LoyaltyRequest loyaltyRequest) {
@@ -45,17 +45,21 @@ public class LoyaltyServiceBean extends BaseLoyaltyBean implements LoyaltyServic
         if (PromotionTypeEnum.isInCampaign(loyaltyRequest.getPromotion())) {
             loyalty = addPromotionLoyaltyPoints(loyaltyRequest, loyalty);
         }
+
+        // for later use in reversal loyalty request
+        persistLoyaltyTransaction(loyaltyRequest);
+
         return DtoConverter.toLoyaltyInformation(loyalty);
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)
     public LoyaltyInformation findLoyaltyByClient(final UUID clientUuid) {
-        final Loyalty loyalty = loyaltyDao.findLoyaltyByClient(clientUuid);
+        final Loyalty loyalty = loyaltyDao.find(clientUuid);
 
         if (loyalty == null) {
-            throw BusinessException.loyaltyNotFoundException();
+            throw BusinessException.loyaltyNotFound();
         }
-        return DtoConverter.toLoyaltyInformation(loyaltyDao.findLoyaltyByClient(clientUuid));
+        return DtoConverter.toLoyaltyInformation(loyalty);
     }
 }

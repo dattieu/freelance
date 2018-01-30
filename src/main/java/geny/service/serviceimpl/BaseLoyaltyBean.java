@@ -5,11 +5,12 @@ import geny.common.enumtype.ProductTypeEnum;
 import geny.common.enumtype.PromotionTypeEnum;
 import geny.exception.BusinessException;
 import geny.persistence.dao.LoyaltyDao;
-import geny.persistence.dao.LoyaltyTransactionDao;
 import geny.persistence.entity.Loyalty;
 import geny.resource.dto.LoyaltyRequest;
 import geny.common.utils.LoyaltyPointMapper;
+import geny.service.serviceintf.LoyaltyTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,37 +33,49 @@ public class BaseLoyaltyBean extends BaseServiceImpl<Loyalty, UUID> {
     private LoyaltyDao loyaltyDao;
 
     @Autowired
-    private LoyaltyTransactionDao loyaltyTransactionDao;
+    private LoyaltyTransactionService loyaltyTransactionService;
+
+    // store every loyalty transaction for later use
+    protected void persistLoyaltyTransaction(final LoyaltyRequest loyaltyRequest) {
+        loyaltyTransactionService.persistLoyaltyTransaction(loyaltyRequest);
+    }
 
     // do some assertions for loyalty request, client action, product type and transaction amount
     protected void assertValidLoyaltyRequest(final LoyaltyRequest loyaltyRequest) {
+        assertNotReversalLoyalty(loyaltyRequest.isReversalLoyalty());
         assertValidClientActionType(loyaltyRequest.getClientActionType());
         assertValidTransactionAmount(loyaltyRequest.getClientActionType(), loyaltyRequest.getTransactionAmount());
     }
 
+    private void assertNotReversalLoyalty(final boolean isReversalLoyalty) {
+        if (isReversalLoyalty) {
+            throw BusinessException.invalidLoyaltyRequest();
+        }
+    }
+
     private void assertValidClientActionType(final ClientActionTypeEnum clientActionType) {
         if (!ClientActionTypeEnum.isValidClientActionType(clientActionType)) {
-            throw BusinessException.invalidClientActionTypeException();
+            throw BusinessException.invalidClientActionType();
         }
     }
 
     private void assertValidTransactionAmount(final ClientActionTypeEnum clientActionType,
                                               final BigDecimal transactionAmount) {
         if (ClientActionTypeEnum.isEverydayUseClientAction(clientActionType) && transactionAmount == null) {
-            throw BusinessException.invalidTransactionAmountException();
+            throw BusinessException.invalidTransactionAmount();
         }
     }
 
     protected void assertValidClientActionWithProductType(final ProductTypeEnum productType,
                                                           final ClientActionTypeEnum clientActionType) {
         if (!ProductTypeEnum.isValidClientActionWithProductType(productType, clientActionType)) {
-            throw BusinessException.inapproriateClientActionWithProductTypeException();
+            throw BusinessException.inappropriateClientActionWithProductType();
         }
     }
 
     // every day use loyalty
     protected Loyalty updateEverydayUseLoyalty(final LoyaltyRequest loyaltyRequest) {
-        final Loyalty loyalty = loyaltyDao.findLoyaltyByClient(loyaltyRequest.getClientId());
+        final Loyalty loyalty = loyaltyDao.find(loyaltyRequest.getClientId());
         return loyalty == null ? createNewEverydayUseLoyalty(loyaltyRequest)
                 : updateCurrentEverydayUseLoyalty(loyaltyRequest, loyalty);
     }
@@ -70,13 +83,14 @@ public class BaseLoyaltyBean extends BaseServiceImpl<Loyalty, UUID> {
     private Loyalty createNewEverydayUseLoyalty(final LoyaltyRequest loyaltyRequest) {
         final Loyalty loyalty = setBasicFieldsForLoyalty(loyaltyRequest);
         loyalty.setPoint(calculateLoyaltyPointsForEverydayUse(loyaltyRequest, 0));
+        loyaltyDao.persist(loyalty);
         return loyalty;
     }
 
     private Loyalty updateCurrentEverydayUseLoyalty(final LoyaltyRequest loyaltyRequest, final Loyalty loyalty) {
         loyalty.setPoint(calculateLoyaltyPointsForEverydayUse(loyaltyRequest, loyalty.getPoint()));
         loyalty.setUpdatedAt(new Date());
-        return loyalty;
+        return loyaltyDao.merge(loyalty);
     }
 
     private int calculateLoyaltyPointsForEverydayUse(final LoyaltyRequest loyaltyRequest, final int currentPoint) {
@@ -88,7 +102,7 @@ public class BaseLoyaltyBean extends BaseServiceImpl<Loyalty, UUID> {
 
     // bank and app interaction loyalty
     protected Loyalty updateBankAppInteractionLoyalty(final LoyaltyRequest loyaltyRequest) {
-        final Loyalty loyalty = loyaltyDao.findLoyaltyByClient(loyaltyRequest.getClientId());
+        final Loyalty loyalty = loyaltyDao.find(loyaltyRequest.getClientId());
         return loyalty == null ? createNewBankAppInteractionLoyalty(loyaltyRequest)
                 : updateCurrentBankAppInteractionLoyalty(loyaltyRequest, loyalty);
     }
@@ -102,7 +116,7 @@ public class BaseLoyaltyBean extends BaseServiceImpl<Loyalty, UUID> {
         return loyalty;
     }
 
-    private Loyalty updateCurrentBankAppInteractionLoyalty(final LoyaltyRequest loyaltyRequest, Loyalty loyalty) {
+    private Loyalty updateCurrentBankAppInteractionLoyalty(final LoyaltyRequest loyaltyRequest, final Loyalty loyalty) {
         Map<ClientActionTypeEnum, Integer> loyaltyMapper = LoyaltyPointMapper.getBankAppInteractionMapper();
 
         loyalty.setPoint(loyaltyMapper.get(loyaltyRequest.getClientActionType()) + loyalty.getPoint());
@@ -112,20 +126,21 @@ public class BaseLoyaltyBean extends BaseServiceImpl<Loyalty, UUID> {
 
     // promotion loyalty points
     protected Loyalty addPromotionLoyaltyPoints(final LoyaltyRequest loyaltyRequest, final Loyalty loyalty) {
-        if (PromotionTypeEnum.isOfLaunchingCampaign(loyaltyRequest.getPromotion()) && isClientStillAmongFirstCardHolders()) {
+        if (PromotionTypeEnum.isOfLaunchingCampaign() && isClientStillAmongFirstCardHolders()) {
             loyalty.setPoint(loyalty.getPoint() * 2);
         }
 
-        if (PromotionTypeEnum.isOfSummerCampaign(loyaltyRequest.getPromotion())
+        if (PromotionTypeEnum.isOfSummerCampaign()
                 && ProductTypeEnum.YO_DEBIT_CARD.equals(loyaltyRequest.getProductType())
                 && loyaltyRequest.isCrossBorderTransaction()) {
             loyalty.setPoint(loyalty.getPoint() * 10);
         }
-        return loyalty;
+        return loyaltyDao.merge(loyalty);
     }
 
+    // what if a client makes many transactions? still get promotion points?
     private boolean isClientStillAmongFirstCardHolders() {
-        return loyaltyTransactionDao.findNumberOfClientsMakeTransactionsWithinADay(new Date()) < MAX_CARD_HOLDERS_PER_DAY;
+        return loyaltyTransactionService.findNumberOfClientsMakeTransactionsWithinADay(new Date()) < MAX_CARD_HOLDERS_PER_DAY;
     }
 
     private Loyalty setBasicFieldsForLoyalty(final LoyaltyRequest loyaltyRequest) {

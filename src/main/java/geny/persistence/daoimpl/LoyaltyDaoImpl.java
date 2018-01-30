@@ -13,9 +13,4 @@ import java.util.UUID;
 
 @Repository("loyaltyDao")
 public class LoyaltyDaoImpl extends BaseDaoImpl<Loyalty, UUID> implements LoyaltyDao {
-
-    @Override
-    public final Loyalty findLoyaltyByClient(final UUID clientUuid) {
-        return find(clientUuid);
-    }
 }

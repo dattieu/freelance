@@ -39,7 +39,6 @@ public class LoyaltyTransaction extends BaseEntity implements Serializable {
     @Column(name = "client_action")
     private ClientActionTypeEnum clientActionType;
 
-    @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "promotion")
     private PromotionTypeEnum promotion;
@@ -50,6 +49,10 @@ public class LoyaltyTransaction extends BaseEntity implements Serializable {
 
     @Column(name = "amount")
     private BigDecimal transactionAmount;
+
+    @NotNull
+    @Column(name = "reversal_loyalty")
+    private boolean isReversalLoyalty;
 
     public UUID getTransactionId() {
         return transactionId;
@@ -105,5 +108,13 @@ public class LoyaltyTransaction extends BaseEntity implements Serializable {
 
     public void setTransactionAmount(BigDecimal transactionAmount) {
         this.transactionAmount = transactionAmount;
+    }
+
+    public boolean isReversalLoyalty() {
+        return isReversalLoyalty;
+    }
+
+    public void setReversalLoyalty(boolean reversalLoyalty) {
+        isReversalLoyalty = reversalLoyalty;
     }
 }

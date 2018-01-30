@@ -20,8 +20,9 @@ public class Constants {
     public static final BigDecimal ONE_MILLION_VND = new BigDecimal(1000000);
 
     // campaign dates
-    public static LocalDate LAUNCHING_START_DATE = LocalDate.of(2018, Month.APRIL, 1);
-    public static LocalDate LAUNCHING_END_DATE = LocalDate.of(2018, Month.AUGUST, 31);
-    public static LocalDate SUMMER_START_DATE = LocalDate.of(2018, Month.JUNE, 1);
-    public static LocalDate SUMMER_END_DATE = LocalDate.of(2018, Month.AUGUST, 31);
+    // TODO confirm the exact dates
+    public static LocalDate LAUNCHING_START_DATE = LocalDate.of(2018, Month.MARCH, 31);
+    public static LocalDate LAUNCHING_END_DATE = LocalDate.of(2018, Month.JUNE, 1);
+    public static LocalDate SUMMER_START_DATE = LocalDate.of(2018, Month.MAY, 31);
+    public static LocalDate SUMMER_END_DATE = LocalDate.of(2018, Month.AUGUST, 1);
 }

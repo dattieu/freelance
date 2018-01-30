@@ -17,10 +17,13 @@ import java.util.List;
 @Service("baseService")
 public class BaseServiceImpl<T, K extends Serializable> implements BaseService<T, K> {
 
-    @Autowired
     private BaseDao<T, K> baseDao;
 
     public BaseServiceImpl() {}
+
+    public BaseServiceImpl(BaseDao<T, K> baseDao) {
+        this.baseDao = baseDao;
+    }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, readOnly = true)

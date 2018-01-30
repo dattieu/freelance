@@ -17,12 +17,15 @@ public class LoyaltyRequest {
     private UUID clientId;
 
     @NotNull
+    private UUID transactionId;
+
+    @NotNull
     private ProductTypeEnum productType;
 
     @NotNull
     private ClientActionTypeEnum clientActionType;
 
-    @NotNull
+    // either loyalty service will check the campaign promotion or it will be passed from the core
     private PromotionTypeEnum promotion;
 
     @NotNull
@@ -31,6 +34,7 @@ public class LoyaltyRequest {
     @NotNull
     private boolean isReversalLoyalty;
 
+    // currency: VND
     private BigDecimal transactionAmount;
 
     public UUID getClientId() {
@@ -40,6 +44,14 @@ public class LoyaltyRequest {
     public LoyaltyRequest setClientId(UUID clientId) {
         this.clientId = clientId;
         return this;
+    }
+
+    public UUID getTransactionId() {
+        return transactionId;
+    }
+
+    public void setTransactionId(UUID transactionId) {
+        this.transactionId = transactionId;
     }
 
     public ProductTypeEnum getProductType() {
