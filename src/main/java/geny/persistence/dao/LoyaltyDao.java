@@ -9,4 +9,5 @@ import java.util.UUID;
  * Created by dat on 1/15/2018.
  */
 public interface LoyaltyDao extends BaseDao<Loyalty, UUID>  {
+    Loyalty findLoyaltyByPhone(String phone);
 }

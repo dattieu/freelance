@@ -11,5 +11,5 @@ import java.util.UUID;
  */
 public interface LoyaltyService extends BaseService<Loyalty, UUID> {
     LoyaltyInformation updateLoyaltyPoints(final LoyaltyRequest loyaltyRequest);
-    LoyaltyInformation findLoyaltyByClient(final UUID clientUuid);
+    LoyaltyInformation findLoyaltyByClient(final String phoneNumber);
 }

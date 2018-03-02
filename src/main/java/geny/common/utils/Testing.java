@@ -8,9 +8,11 @@ import geny.persistence.entity.Loyalty;
 import geny.persistence.entity.LoyaltyTransaction;
 import geny.resource.dto.LoyaltyRequest;
 import geny.service.serviceimpl.BaseLoyaltyBean;
+import org.apache.commons.lang3.time.DateUtils;
 
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.UUID;
 
 /**
@@ -19,6 +21,7 @@ import java.util.UUID;
 public class Testing {
     public static void main(String[] args) {
         LoyaltyRequest loyaltyRequest = new LoyaltyRequest();
+        loyaltyRequest.setPhoneNumber("0946471974");
         loyaltyRequest.setClientId(UUID.randomUUID());
         loyaltyRequest.setTransactionId(UUID.randomUUID());
         loyaltyRequest.setProductType(ProductTypeEnum.YO_DEBIT_CARD);

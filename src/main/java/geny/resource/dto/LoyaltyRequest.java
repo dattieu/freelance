@@ -5,6 +5,8 @@ import geny.common.enumtype.ProductTypeEnum;
 import geny.common.enumtype.PromotionTypeEnum;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.UUID;
 
@@ -12,6 +14,10 @@ import java.util.UUID;
  * Created by dat on 1/15/2018.
  */
 public class LoyaltyRequest {
+
+    @Size(min = 10, max = 11)
+    @Pattern(regexp = "\\d+")
+    private String phoneNumber;
 
     @NotNull
     private UUID clientId;
@@ -36,6 +42,15 @@ public class LoyaltyRequest {
 
     // currency: VND
     private BigDecimal transactionAmount;
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public LoyaltyRequest setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+        return this;
+    }
 
     public UUID getClientId() {
         return clientId;

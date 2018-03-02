@@ -10,6 +10,7 @@ import java.util.UUID;
  * Created by dat on 1/27/2018.
  */
 public interface LoyaltyTransactionDao extends BaseDao<LoyaltyTransaction, UUID> {
-    List<LoyaltyTransaction> findLoyaltyTransactionsByClient(final UUID clientId);
-    int findNumberOfClientsMakeTransactionsWithinADay(final Date date);
+    List<LoyaltyTransaction> findLoyaltyTransactionsByClient(final String phoneNumber);
+    LoyaltyTransaction findLoyaltyTransaction(final UUID transactionUuid);
+    int findNumberOfClientsMakeTransactionsToday();
 }

@@ -1,6 +1,9 @@
 package geny.service.dto;
 
+import geny.persistence.entity.Redemption;
+
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -8,11 +11,24 @@ import java.util.UUID;
  */
 public class LoyaltyInformation {
 
+    private String phoneNumber;
+
     private UUID clientId;
 
     private int loyaltyPoint;
 
+    private List<Redemption> redemptionList;
+
     private Date updatedAt;
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public LoyaltyInformation setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+        return this;
+    }
 
     public UUID getClientId() {
         return clientId;
@@ -29,6 +45,15 @@ public class LoyaltyInformation {
 
     public LoyaltyInformation setLoyaltyPoint(int loyaltyPoint) {
         this.loyaltyPoint = loyaltyPoint;
+        return this;
+    }
+
+    public List<Redemption> getRedemptionList() {
+        return redemptionList;
+    }
+
+    public LoyaltyInformation setRedemptionList(List<Redemption> redemptionList) {
+        this.redemptionList = redemptionList;
         return this;
     }
 

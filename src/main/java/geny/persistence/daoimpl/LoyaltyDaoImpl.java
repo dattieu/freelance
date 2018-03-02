@@ -13,4 +13,8 @@ import java.util.UUID;
 
 @Repository("loyaltyDao")
 public class LoyaltyDaoImpl extends BaseDaoImpl<Loyalty, UUID> implements LoyaltyDao {
+    @Override
+    public Loyalty findLoyaltyByPhone(String phone) {
+        return (Loyalty) getCriteria().add(Restrictions.eq("phoneNumber", phone)).uniqueResult();
+    }
 }

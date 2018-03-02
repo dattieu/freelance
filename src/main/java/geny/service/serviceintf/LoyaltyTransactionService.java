@@ -11,5 +11,5 @@ import java.util.UUID;
  */
 public interface LoyaltyTransactionService extends BaseService<LoyaltyTransaction, UUID> {
     void persistLoyaltyTransaction(final LoyaltyRequest loyaltyRequest);
-    int findNumberOfClientsMakeTransactionsWithinADay(final Date date);
+    int findNumberOfClientsMakeTransactionsWithinADay();
 }

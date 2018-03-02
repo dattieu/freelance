@@ -8,7 +8,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.io.Serializable;
@@ -21,10 +20,13 @@ public class LoyaltyTransaction extends BaseEntity implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    @Id
     @NotNull
     @Column(name = "transaction_id", nullable = false, unique = true)
     private UUID transactionId;
+
+    @NotNull
+    @Column(name = "phone", nullable = false)
+    private String phoneNumber;
 
     @NotNull
     @Column(name = "client_id")
@@ -60,6 +62,14 @@ public class LoyaltyTransaction extends BaseEntity implements Serializable {
 
     public void setTransactionId(UUID transactionId) {
         this.transactionId = transactionId;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     public UUID getClientId() {
